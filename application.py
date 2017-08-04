@@ -11,11 +11,12 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-@app.route('/')
-@app.route('/hello')
-def HelloWorld():
+@app.route('/booksbycategories/<int:bookcategory_id>/')
+
+def booksbycategorieshome(bookcategory_id):
 	
-	items = session.query(Book).all()
+	bookcategory = session.query(BookCategory).filter_by(id=bookcategory_id).one()
+	items = session.query(Book).filter_by(bookcategory_id=bookcategory.id)
 	
 	output = ''
 	for i in items:
