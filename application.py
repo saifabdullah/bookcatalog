@@ -11,9 +11,10 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-@app.route('/booksbycategories/<int:bookcategory_id>/')
+    
+@app.route('/cataloghome/<int:bookcategory_id>/')
 
-def booksbycategorieshome(bookcategory_id):
+def cataloghome(bookcategory_id):
 	
 	bookcategory = session.query(BookCategory).filter_by(id=bookcategory_id).one()
 	items = session.query(Book).filter_by(bookcategory_id=bookcategory.id)
@@ -31,6 +32,23 @@ def booksbycategorieshome(bookcategory_id):
 		output += '</br>'
 		
 	return output
+
+@app.route('/cataloghome/<int:bookcategory_id>/newbook')
+
+def newBook(bookcategory_id):
+    return "page to create a new book."
+
+
+@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook')
+
+def editBook(bookcategory_id, id):
+    return "page to edit a book."
+
+
+@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook')
+
+def deleteBook(bookcategory_id, id):
+    return "page to delete a book."
 
 if __name__ ==  '__main__':
 	app.debug = True
