@@ -11,6 +11,12 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+
+
+
+
+
+
     
 @app.route('/cataloghome/<int:bookcategory_id>/')
 
@@ -21,7 +27,7 @@ def cataloghome(bookcategory_id):
 	
 	
 		
-	return render_template('home.html', bookcategory=bookcategory,items=items)
+	return render_template('catalog.html', bookcategory=bookcategory,items=items)
 
 @app.route('/cataloghome/<int:bookcategory_id>/newbook')
 
