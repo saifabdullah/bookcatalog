@@ -1,0 +1,25 @@
+<html>
+
+<body>
+
+<h1>{{bookcategory.name}}</h1>
+
+{% for i in items%}
+
+<div>
+
+<p>{{i.name}}</p>
+
+<p>{{i.author}}</p>
+
+<p> {{i.description}} </p>
+
+<p> {{i.reviews}}  </p>
+
+
+</div>
+
+{% endfor %}
+</body>
+
+</html>
