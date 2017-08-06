@@ -16,6 +16,8 @@
 
 <p> {{i.reviews}}  </p>
 
+<a href ='{{url_for('editBook',bookcategory_id=bookcategory.id,id=i.id)}}'> 	Edit   </a> &emsp;<a href='{{url_for('deleteBook',bookcategory_id=bookcategory.id,id=i.id)}}'> Delete</a>
+
 
 </div>
 
