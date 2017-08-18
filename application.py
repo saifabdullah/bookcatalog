@@ -30,6 +30,19 @@ def cataloghome(bookcategory_id):
   	return render_template('catalog.html', bookcategory=bookcategory,items=items)
 
 
+
+@app.route('/cataloghome/<int:bookcategory_id>/new',methods=['GET', 'POST'])
+def newBook(bookcategory_id):
+	if request.method == 'POST':
+		newEntry = Book(name=request.form['name'],author=request.form['author'],
+		description=request.form['author'],reviews=request.form['reviews'],
+		bookcategory_id=bookcategory_id)
+		session.add(newEntry)
+		session.commit()
+		return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
+	else:
+		return render_template('newbook.html',bookcategory_id=bookcategory_id)  
+
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook')
 
 def editBook(bookcategory_id, id):
@@ -44,3 +57,9 @@ def deleteBook(bookcategory_id, id):
 if __name__ ==  '__main__':
 	app.debug = True
 	app.run(host='0.0.0.0',port=5000)
+
+
+
+
+
+

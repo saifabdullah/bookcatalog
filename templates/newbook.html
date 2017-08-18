@@ -1,0 +1,61 @@
+<html>
+
+<body>
+
+<h3> Adding a New Book </h3>
+
+<form action="{{url_for('newBook',bookcategory_id=bookcategory_id)}}" method='POST'>
+
+	Name: 
+
+	<input type = 'text' size = '30' name = 'name'>
+
+	</br>
+
+	Author: 
+
+	<input type = 'text'  size = '30' name = 'author'>
+
+	</br>
+
+	Description: 
+
+	<input type = 'text'  size = '30'  name = 'description'>
+
+	</br>
+
+	Reviews: 
+
+	<input type = 'text' size = '30' name = 'reviews'>
+
+	</br>
+
+
+
+
+    <input type='submit'  value = 'Create'>
+
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<form action = "{{url_for('newBook',bookcategory_id=bookcategory_id)}}" method="POST">  
+
+
+<p> Name: </p>
+<p> Author: </p>
+<p> Description: </p>
+<p> Reviews: </p> -->
+
+
+</body>
+</html>
