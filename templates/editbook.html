@@ -1,0 +1,37 @@
+<html>
+<body>
+
+
+<form action= "{{url_for('editBook', bookcategory_id = bookcategory_id, id=item.id)}}" method = 'POST'>
+
+<p>Name:</p>
+<input type = 'text' size='30' name = 'name' placeholder = '{{item.name}}'>
+
+<p>Author:</p>
+<input type = 'text' size='30' name = 'author' placeholder = '{{item.author}}'>
+
+<p>Description:</p>
+<input type = 'text' size='30' name = 'description' placeholder = '{{item.description}}'>
+
+<p>Reviews: </p>
+<input  type = 'text' size= '30' name = 'reviews' placeholder = '{{item.reviews}}'>
+
+<p><input type = 'submit' value = 'Edit'> </p>
+
+<p> <a href="{{url_for('cataloghome',bookcategory_id=bookcategory_id)}}">Cancel</a>
+
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

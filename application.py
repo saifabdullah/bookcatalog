@@ -43,10 +43,25 @@ def newBook(bookcategory_id):
 	else:
 		return render_template('newbook.html',bookcategory_id=bookcategory_id)  
 
-@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook')
+@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook',methods=['GET','POST'])
 
 def editBook(bookcategory_id, id):
-    return "page to edit a book."
+    editedBook = session.query(Book).filter_by(id=id).one()
+    if request.method == 'POST':
+    	if request.form ['name']:
+    		editedBook.name  = request.form['name']
+    	if request.form ['author']:
+    		editedBook.author = request.form['author']
+    	if request.form['description']:
+    		editedBook.description = request.form['description']
+    	if request.form['reviews']:
+    		editedBook.reviews = request.form['reviews']
+    	session.add(editedBook)
+    	session.commit()
+        return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
+
+    else:
+        return render_template('editbook.html',bookcategory_id=bookcategory_id,id=id,item=editedBook)
 
 
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook')
@@ -57,9 +72,6 @@ def deleteBook(bookcategory_id, id):
 if __name__ ==  '__main__':
 	app.debug = True
 	app.run(host='0.0.0.0',port=5000)
-
-
-
 
 
 
