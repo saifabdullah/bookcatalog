@@ -4,6 +4,9 @@
 
 <h1>{{bookcategory.name}}</h1>
 
+<p>
+<a href ='{{url_for('newBook',bookcategory_id=bookcategory.id)}}'> 	Add a New Book in this category  </a>
+</p>
 {% for i in items%}
 
 <div>
