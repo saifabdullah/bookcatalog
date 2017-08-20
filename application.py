@@ -31,7 +31,7 @@ def cataloghome(bookcategory_id):
 
 
 
-@app.route('/cataloghome/<int:bookcategory_id>/new',methods=['GET', 'POST'])
+@app.route('/cataloghome/<int:bookcategory_id>/newbook',methods=['GET', 'POST'])
 def newBook(bookcategory_id):
 	if request.method == 'POST':
 		newEntry = Book(name=request.form['name'],author=request.form['author'],
@@ -64,10 +64,18 @@ def editBook(bookcategory_id, id):
         return render_template('editbook.html',bookcategory_id=bookcategory_id,id=id,item=editedBook)
 
 
-@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook')
+@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook',methods=['GET', 'POST'])
 
 def deleteBook(bookcategory_id, id):
-    return "page to delete a book."
+	booktoDelete = session.query(Book).filter_by(id=id).one()
+	if request.method == 'POST':
+		session.delete(booktoDelete)
+		session.commit()
+		return render_template('deleteconfirmation.html',item=booktoDelete)
+	else :
+		return render_template('deletebook.html',item=booktoDelete)
+
+
 
 if __name__ ==  '__main__':
 	app.debug = True
