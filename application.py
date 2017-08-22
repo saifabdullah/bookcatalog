@@ -11,16 +11,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
  
-@app.route('/cataloghome/')
-@app.route('/')
-
-def home():
-	categories =session.query(BookCategory).all()
-	items = session.query(Book).all()
-	return render_template('home.html',categories=categories,items=items)
 
 
-     
 @app.route('/cataloghome/<int:bookcategory_id>/')
  
 def cataloghome(bookcategory_id):
