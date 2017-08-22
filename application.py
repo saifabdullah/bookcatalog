@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
-from sqlalchemy import create_engine
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker
 from book_database_setup import Base,  BookCategory, Book
  
@@ -76,6 +76,21 @@ def deleteBook(bookcategory_id, id):
 		return render_template('deletebook.html',item=booktoDelete)
 
 
+
+# Making an API endpoint for books from one category
+@app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
+def catalogJSON(bookcategory_id):
+	bookcategory = session.query(BookCategory).filter_by(id=
+		bookcategory_id).one()
+	items = session.query(Book).filter_by(bookcategory_id=bookcategory_id).all()
+	return jsonify(Books=[i.serialize for i in items])
+
+# Making an API endpoint for a certain book in a category
+@app.route('/cataloghome/<int:bookcategory_id>/books/<int:id>/JSON/')
+def bookJSON(bookcategory_id,id):
+	book = session.query(Book).filter_by(id=id).one()
+	
+	return jsonify(book=book.serialize)
 
 if __name__ ==  '__main__':
 	app.debug = True

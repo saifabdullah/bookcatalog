@@ -38,5 +38,16 @@ class Book(Base):
 	bookcategory_id = Column(Integer,ForeignKey('bookcategory.id'))
 	bookcategory = relationship(BookCategory)
 
+	@property
+	def serialize(self):
+		# Returns object data in easily serializeable format
+		return {
+			'name'	: self.name,
+			'id' : self.id,
+			'author' : self.author,
+			'description' : self.description,
+			'reviews' : self.reviews,
+		}
+
 engine = create_engine('sqlite:///bookcatalog.db')
 Base.metadata.create_all(engine)
