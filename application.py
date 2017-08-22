@@ -11,8 +11,6 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
  
-
-
 @app.route('/cataloghome/<int:bookcategory_id>/')
  
 def cataloghome(bookcategory_id):
@@ -31,7 +29,7 @@ def newBook(bookcategory_id):
 		bookcategory_id=bookcategory_id)
 		session.add(newEntry)
 		session.commit()
-		flash("new book created!")
+		flash("The Book has been created!")
 		return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
 	else:
 		return render_template('newbook.html',bookcategory_id=bookcategory_id)  
@@ -66,7 +64,7 @@ def deleteBook(bookcategory_id, id):
 		session.delete(booktoDelete)
 		session.commit()
 		flash("Book successfully deleted")
-		return render_template('deleteconfirmation.html',item=booktoDelete)
+		return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
 	else :
 		return render_template('deletebook.html',item=booktoDelete)
 
