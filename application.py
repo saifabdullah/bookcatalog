@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-from sqlalchemy import create_engine, or_
+from flask import Flask, render_template, request, redirect, url_for, jsonify , flash
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from book_database_setup import Base,  BookCategory, Book
  
@@ -35,10 +35,11 @@ def cataloghome(bookcategory_id):
 def newBook(bookcategory_id):
 	if request.method == 'POST':
 		newEntry = Book(name=request.form['name'],author=request.form['author'],
-		description=request.form['author'],reviews=request.form['reviews'],
+		description=request.form['description'],reviews=request.form['reviews'],
 		bookcategory_id=bookcategory_id)
 		session.add(newEntry)
 		session.commit()
+		flash("new book created!")
 		return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
 	else:
 		return render_template('newbook.html',bookcategory_id=bookcategory_id)  
@@ -58,6 +59,7 @@ def editBook(bookcategory_id, id):
     		editedBook.reviews = request.form['reviews']
     	session.add(editedBook)
     	session.commit()
+    	flash("the book is edited successfully!")
         return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
 
     else:
@@ -71,6 +73,7 @@ def deleteBook(bookcategory_id, id):
 	if request.method == 'POST':
 		session.delete(booktoDelete)
 		session.commit()
+		flash("Book successfully deleted")
 		return render_template('deleteconfirmation.html',item=booktoDelete)
 	else :
 		return render_template('deletebook.html',item=booktoDelete)
@@ -93,6 +96,7 @@ def bookJSON(bookcategory_id,id):
 	return jsonify(book=book.serialize)
 
 if __name__ ==  '__main__':
+	app.secret_key = 'top_secret_key'
 	app.debug = True
 	app.run(host='0.0.0.0',port=5000)
 
