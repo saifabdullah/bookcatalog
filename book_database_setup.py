@@ -1,8 +1,3 @@
-"""setting up the database for bookcatalog web-application. 
-
-"""
-
-
 #importing default os, sys and specific packages of sqlalchemy module to build the database 
 
 import os 
@@ -16,12 +11,14 @@ Base = declarative_base()
 
 class BookCategory(Base):
 
-	"""creating Bookcategory class and table in the database."""
+	#creating Bookcategory class and table in the database.
 
 	__tablename__ = 'bookcategory'
 
 	id = Column(Integer,primary_key=True)
 	name =  Column(String(250),nullable=False)
+
+	
 
 class Book(Base):
 
