@@ -11,7 +11,7 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
  
-@app.route('/cataloghome/<int:bookcategory_id>/')
+
 
 # Making an API endpoint for books from one category
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
@@ -27,6 +27,8 @@ def bookJSON(bookcategory_id,id):
 	book = session.query(Book).filter_by(id=id).one()
 	
 	return jsonify(book=book.serialize)
+
+@app.route('/cataloghome/<int:bookcategory_id>/')
  
 def cataloghome(bookcategory_id):
  	
@@ -44,7 +46,7 @@ def newBook(bookcategory_id):
 		bookcategory_id=bookcategory_id)
 		session.add(newEntry)
 		session.commit()
-		flash("The Book has been created!")
+		flash('New Book %s Successfully created' % newEntry.name)
 		return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
 	else:
 		return render_template('newbook.html',bookcategory_id=bookcategory_id)  
