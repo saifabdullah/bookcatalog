@@ -12,6 +12,21 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
  
 @app.route('/cataloghome/<int:bookcategory_id>/')
+
+# Making an API endpoint for books from one category
+@app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
+def catalogJSON(bookcategory_id):
+	bookcategory = session.query(BookCategory).filter_by(id=
+		bookcategory_id).one()
+	items = session.query(Book).filter_by(bookcategory_id=bookcategory_id).all()
+	return jsonify(Books=[i.serialize for i in items])
+
+# Making an API endpoint for a certain book in a category
+@app.route('/cataloghome/<int:bookcategory_id>/books/<int:id>/JSON/')
+def bookJSON(bookcategory_id,id):
+	book = session.query(Book).filter_by(id=id).one()
+	
+	return jsonify(book=book.serialize)
  
 def cataloghome(bookcategory_id):
  	
@@ -70,20 +85,7 @@ def deleteBook(bookcategory_id, id):
 
 
 
-# Making an API endpoint for books from one category
-@app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
-def catalogJSON(bookcategory_id):
-	bookcategory = session.query(BookCategory).filter_by(id=
-		bookcategory_id).one()
-	items = session.query(Book).filter_by(bookcategory_id=bookcategory_id).all()
-	return jsonify(Books=[i.serialize for i in items])
 
-# Making an API endpoint for a certain book in a category
-@app.route('/cataloghome/<int:bookcategory_id>/books/<int:id>/JSON/')
-def bookJSON(bookcategory_id,id):
-	book = session.query(Book).filter_by(id=id).one()
-	
-	return jsonify(book=book.serialize)
 
 if __name__ ==  '__main__':
 	app.secret_key = 'top_secret_key'
