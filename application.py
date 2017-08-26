@@ -3,15 +3,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from book_database_setup import Base,  BookCategory, Book
  
-app = Flask(__name__)
- 
 engine = create_engine('sqlite:///bookcatalog.db')
 Base.metadata.bind = engine
  
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
  
+ # New imports for creating anti-forgery state token
+from flask import  session as login_session
+import random, string
 
+app = Flask(__name__)
 
 # Making an API endpoint for books from one category
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
@@ -28,7 +30,15 @@ def bookJSON(bookcategory_id,id):
 	
 	return jsonify(book=book.serialize)
 
-@app.route('/cataloghome/<int:bookcategory_id>/')
+
+# Create anti-forgery state token
+@app.route('/login')
+def showLogin():
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+					for x in xrange(32))
+	login_session['state'] = state
+	return "The session state is %s" % login_session['state']
+
  
 def cataloghome(bookcategory_id):
  	
