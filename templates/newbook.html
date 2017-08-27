@@ -3,7 +3,6 @@
 	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-
 <h3> Adding a New Book </h3>
 
 <form action="{{url_for('newBook',bookcategory_id=bookcategory_id)}}" method='POST'>
@@ -49,14 +48,6 @@
 
 
 
-
-<!--<form action = "{{url_for('newBook',bookcategory_id=bookcategory_id)}}" method="POST">  
-
-
-<p> Name: </p>
-<p> Author: </p>
-<p> Description: </p>
-<p> Reviews: </p> -->
 
 
 </body>

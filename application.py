@@ -179,6 +179,8 @@ def cataloghome(bookcategory_id):
 
 @app.route('/cataloghome/<int:bookcategory_id>/newbook',methods=['GET', 'POST'])
 def newBook(bookcategory_id):
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		newEntry = Book(name=request.form['name'],author=request.form['author'],
 		description=request.form['description'],reviews=request.form['reviews'],
@@ -193,13 +195,16 @@ def newBook(bookcategory_id):
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook',methods=['GET','POST'])
 
 def editBook(bookcategory_id, id):
+
+    if  'username' not in login_session:
+		return redirect('/login')
     editedBook = session.query(Book).filter_by(id=id).one()
     if request.method == 'POST':
     	if request.form ['name']:
     		editedBook.name  = request.form['name']
     	if request.form ['author']:
     		editedBook.author = request.form['author']
-    	if request.form['description']:
+    	if request.form['description']: 
     		editedBook.description = request.form['description']
     	if request.form['reviews']:
     		editedBook.reviews = request.form['reviews']
@@ -215,6 +220,8 @@ def editBook(bookcategory_id, id):
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook',methods=['GET', 'POST'])
 
 def deleteBook(bookcategory_id, id):
+	if 'username' not in login_session:
+		return redirect('/login')
 	booktoDelete = session.query(Book).filter_by(id=id).one()
 	if request.method == 'POST':
 		session.delete(booktoDelete)
