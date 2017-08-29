@@ -1,11 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify , flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from book_database_setup import Base,  BookCategory, Book
- 
+
 # New imports for creating anti-forgery state token
-from flask import  session as login_session
-import random, string
+from flask import session as login_session
+import random
+import string
 
 # New Imports for GConnect
 from oauth2client.client import flow_from_clientsecrets
@@ -16,27 +17,29 @@ from flask import make_response
 import requests
 
 CLIENT_ID = json.loads(
-	open('client_secrets.json','r').read())['web']['client_id']
-APPLICATION_NAME  = "Book Catalog Application"
-
+    open('client_secrets.json', 'r').read())['web']['client_id']
+APPLICATION_NAME = "Book Catalog Application"
 
 
 engine = create_engine('sqlite:///bookcatalog.db')
 Base.metadata.bind = engine
- 
+
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 app = Flask(__name__)
 
 # Create anti-forgery state token
+
+
 @app.route('/login')
 def showLogin():
-	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-					for x in xrange(32))
-	login_session['state'] = state
-	return render_template('login.html', STATE=state)
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    return render_template('login.html', STATE=state)
 
-@app.route('/gconnect',methods=['POST'])
+
+@app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
     if request.args.get('state') != login_session['state']:
@@ -117,20 +120,23 @@ def gconnect():
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
-    return output	
+    return output
+
 
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(json.dumps(
+            'Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session[
+        'access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
@@ -145,100 +151,96 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(json.dumps(
+            'Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
-
-
-
 
 
 # Making an API endpoint for books from one category
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
 def catalogJSON(bookcategory_id):
-	bookcategory = session.query(BookCategory).filter_by(id=
-		bookcategory_id).one()
-	items = session.query(Book).filter_by(bookcategory_id=bookcategory_id).all()
-	return jsonify(Books=[i.serialize for i in items])
+    bookcategory = session.query(
+        BookCategory).filter_by(id=bookcategory_id).one()
+    items = session.query(Book).filter_by(
+        bookcategory_id=bookcategory_id).all()
+    return jsonify(Books=[i.serialize for i in items])
 
 # Making an API endpoint for a certain book in a category
+
+
 @app.route('/cataloghome/<int:bookcategory_id>/books/<int:id>/JSON/')
-def bookJSON(bookcategory_id,id):
-	book = session.query(Book).filter_by(id=id).one()
-	
-	return jsonify(book=book.serialize)
+def bookJSON(bookcategory_id, id):
+    book = session.query(Book).filter_by(id=id).one()
+
+    return jsonify(book=book.serialize)
+
 
 @app.route('/cataloghome/<int:bookcategory_id>/')
 def cataloghome(bookcategory_id):
- 	
-  	bookcategory = session.query(BookCategory).filter_by(id=bookcategory_id).one()
-  	items = session.query(Book).filter_by(bookcategory_id=bookcategory.id)
-  	return render_template('catalog.html', bookcategory=bookcategory,items=items)
+
+    bookcategory = session.query(
+        BookCategory).filter_by(id=bookcategory_id).one()
+    items = session.query(Book).filter_by(bookcategory_id=bookcategory.id)
+    return render_template('catalog.html', bookcategory=bookcategory, items=items)
 
 
-
-@app.route('/cataloghome/<int:bookcategory_id>/newbook',methods=['GET', 'POST'])
+@app.route('/cataloghome/<int:bookcategory_id>/newbook', methods=['GET', 'POST'])
 def newBook(bookcategory_id):
-	if 'username' not in login_session:
-		return redirect('/login')
-	if request.method == 'POST':
-		newEntry = Book(name=request.form['name'],author=request.form['author'],
-		description=request.form['description'],reviews=request.form['reviews'],
-		bookcategory_id=bookcategory_id)
-		session.add(newEntry)
-		session.commit()
-		flash('New Book %s Successfully created' % newEntry.name)
-		return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
-	else:
-		return render_template('newbook.html',bookcategory_id=bookcategory_id)  
+    if 'username' not in login_session:
+        return redirect('/login')
+    if request.method == 'POST':
+        newEntry = Book(name=request.form['name'], author=request.form['author'],
+                        description=request.form[
+                            'description'], reviews=request.form['reviews'],
+                        bookcategory_id=bookcategory_id)
+        session.add(newEntry)
+        session.commit()
+        flash('New Book %s Successfully created' % newEntry.name)
+        return redirect(url_for('cataloghome', bookcategory_id=bookcategory_id))
+    else:
+        return render_template('newbook.html', bookcategory_id=bookcategory_id)
 
-@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook',methods=['GET','POST'])
 
+@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook', methods=['GET', 'POST'])
 def editBook(bookcategory_id, id):
 
-    if  'username' not in login_session:
-		return redirect('/login')
+    if 'username' not in login_session:
+        return redirect('/login')
     editedBook = session.query(Book).filter_by(id=id).one()
     if request.method == 'POST':
-    	if request.form ['name']:
-    		editedBook.name  = request.form['name']
-    	if request.form ['author']:
-    		editedBook.author = request.form['author']
-    	if request.form['description']: 
-    		editedBook.description = request.form['description']
-    	if request.form['reviews']:
-    		editedBook.reviews = request.form['reviews']
-    	session.add(editedBook)
-    	session.commit()
-    	flash("the book is edited successfully!")
-        return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
+        if request.form['name']:
+            editedBook.name = request.form['name']
+        if request.form['author']:
+            editedBook.author = request.form['author']
+        if request.form['description']:
+            editedBook.description = request.form['description']
+        if request.form['reviews']:
+            editedBook.reviews = request.form['reviews']
+        session.add(editedBook)
+        session.commit()
+        flash("the book is edited successfully!")
+        return redirect(url_for('cataloghome', bookcategory_id=bookcategory_id))
 
     else:
-        return render_template('editbook.html',bookcategory_id=bookcategory_id,id=id,item=editedBook)
+        return render_template('editbook.html', bookcategory_id=bookcategory_id, id=id, item=editedBook)
 
 
-@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook',methods=['GET', 'POST'])
-
+@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook', methods=['GET', 'POST'])
 def deleteBook(bookcategory_id, id):
-	if 'username' not in login_session:
-		return redirect('/login')
-	booktoDelete = session.query(Book).filter_by(id=id).one()
-	if request.method == 'POST':
-		session.delete(booktoDelete)
-		session.commit()
-		flash("Book successfully deleted")
-		return redirect(url_for('cataloghome',bookcategory_id=bookcategory_id))
-	else :
-		return render_template('deletebook.html',item=booktoDelete)
+    if 'username' not in login_session:
+        return redirect('/login')
+    booktoDelete = session.query(Book).filter_by(id=id).one()
+    if request.method == 'POST':
+        session.delete(booktoDelete)
+        session.commit()
+        flash("Book successfully deleted")
+        return redirect(url_for('cataloghome', bookcategory_id=bookcategory_id))
+    else:
+        return render_template('deletebook.html', item=booktoDelete)
 
 
-
-
-
-if __name__ ==  '__main__':
-	app.secret_key = 'top_secret_key'
-	app.debug = True
-	app.run(host='0.0.0.0',port=5000)
-
-
-
+if __name__ == '__main__':
+    app.secret_key = 'top_secret_key'
+    app.debug = True
+    app.run(host='0.0.0.0', port=5000)
