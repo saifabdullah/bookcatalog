@@ -176,13 +176,25 @@ def bookJSON(bookcategory_id, id):
     return jsonify(book=book.serialize)
 
 
+
+@app.route('/')
+@app.route('/cataloghome/')
+def showcatalog():
+    categories=session.query(BookCategory).all()
+    return render_template('home.html',categories=categories)
+
+
+
 @app.route('/cataloghome/<int:bookcategory_id>/')
 def cataloghome(bookcategory_id):
 
     bookcategory = session.query(
         BookCategory).filter_by(id=bookcategory_id).one()
-    items = session.query(Book).filter_by(bookcategory_id=bookcategory.id)
+    items = session.query(Book).filter_by(bookcategory_id=bookcategory.id).all()
     return render_template('catalog.html', bookcategory=bookcategory, items=items)
+
+
+   
 
 
 @app.route('/cataloghome/<int:bookcategory_id>/newbook', methods=['GET', 'POST'])
