@@ -1,9 +1,4 @@
-body {
-     font-family: sans-serif;
-     background-image: url('img3.jpg');
-     background-color: #333333
- }
-  
+
 
  h1,
  h2,
@@ -38,21 +33,36 @@ body {
      color: #ffffcc;
      font-size: .75em;
  }
+
+ .container {
+     font-family: sans-serif;
+     background-color: #7986cb;
+     
+     
+ }
  
  .pane {
-     position: absolute;
+     position: relative;
      left: 25%;
      border: 2px solid;
      border-radius: 25px;
      padding: 5px;
      margin: 5px;
      border-color: #999999;
-     background-color: #333333
+     background-color: #333333;
  }
  
  .header {
      left: 50%;
      text-align: center;
+ }
+
+ .login {
+     
+     
+     float: right;
+     display: inline-block;
+     
  }
  
  .name {
@@ -68,7 +78,9 @@ body {
      float: right;
  }
  
- .editdeletepane {}
+ .editdeletepane {
+
+ }
   
  .flash {
      background: #cee5f5;

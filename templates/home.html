@@ -1,6 +1,14 @@
-{% extends "main.html" %}
-{% block content %}
-{% include "header.html" %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+	</head>
+	<body>
+	<div class = "container">
+		
+
 	<div class="row top-menu">
 		<div class="col-md-10"></div>
 		<div class="col-md-2 text-right">
@@ -20,7 +28,13 @@
 			<p></p>
 			<p></p>
 			<p></p>
-	
+	<div class = "login">
+		<div class = "col-md-12">	
+			<form action = "login.html">
+			<input type = "button" value = "LOGIN">
+			</form>
+		</div>
+	</div>
 
 <div class = 'flash'>
 		      {% with messages = get_flashed_messages() %}
@@ -50,5 +64,10 @@
 				<div class="col-md-1"></div>
 			</div>
 		</a>
-	{% endfor %}
-{% endblock %}
+
+		{% endfor %}
+
+
+</div>
+</body>
+</html>
