@@ -27,12 +27,13 @@
  dd,
  dt {
      color: #232121;
+     font-size: 1.2em;
  }
  
  a {
      text-decoration: none;
      color: #161717;
-     font-size: .75em;
+     font-size: 1em;
  }
 
  .container {
