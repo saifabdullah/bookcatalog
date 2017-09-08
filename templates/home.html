@@ -3,7 +3,7 @@
 {% block body %}
     <body>
     <div class = "pane">
-    <h2> Book Catalog Homepage </h2>
+    
 
 			<p></p>
 			<p></p>
@@ -35,9 +35,9 @@
 
 </div>
 	
-
+	<div class="col-md-10"><em><h3> Categories</h3></em></div>
 	{% for i in categories %}
-
+		
 		<a href = "{{url_for('cataloghome', bookcategory_id = i.id)}}">
 			<div class="row">
 				<div class="col-md-1"></div>

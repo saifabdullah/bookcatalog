@@ -11,7 +11,8 @@
  h1,
  h2 {
      font-family: 'georgia', serif;
-     margin: 0;
+     margin: 50px;
+     border-left: 100px;
  }
  
  h1 {
@@ -25,12 +26,12 @@
  p,
  dd,
  dt {
-     color: #cccccc;
+     color: #232121;
  }
  
  a {
      text-decoration: none;
-     color: #707B7C;
+     color: #161717;
      font-size: .75em;
  }
 
