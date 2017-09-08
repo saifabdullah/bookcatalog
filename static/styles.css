@@ -36,6 +36,24 @@
      font-size: 1em;
  }
 
+a:link {
+    color:#164065;
+}
+
+
+a:visited {
+    color: #166558;
+}
+
+a:hover {
+    color: #b1e2da;
+}
+
+
+a:active {
+    color: #195b94;
+}
+
  .container {
      font-family: sans-serif;
      background-color: #3498DB;       
