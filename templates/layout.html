@@ -5,10 +5,12 @@
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
 	</head>
+	<title>{% block title %} {% endblock title %}</title>
+
 	<body>
-		<div class="container">
-			{% block content %}
-			{% endblock %}
-		</div>
+		  {% block body %}
+		  <h1> Saif's Book Catalog </h1>
+
+		  {% endblock body %}
 	</body>
 </html>

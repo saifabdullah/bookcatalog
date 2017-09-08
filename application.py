@@ -31,12 +31,7 @@ app = Flask(__name__)
 # Create anti-forgery state token
 
 
-@app.route('/login')
-def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-    login_session['state'] = state
-    return render_template('login.html', STATE=state)
+
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -194,6 +189,13 @@ def cataloghome(bookcategory_id):
     return render_template('catalog.html', bookcategory=bookcategory, items=items)
 
 
+
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    return render_template('login.html', STATE=state)
    
 
 

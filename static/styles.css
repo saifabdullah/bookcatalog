@@ -4,7 +4,7 @@
  h2,
  h3,
  h4 {
-     color: #ffffff;
+     color: #17202A;
  }
   
 
@@ -30,26 +30,25 @@
  
  a {
      text-decoration: none;
-     color: #ffffcc;
+     color: #707B7C;
      font-size: .75em;
  }
 
  .container {
      font-family: sans-serif;
-     background-color: #7986cb;
-     
+     background-color: #3498DB;       
+;
      
  }
  
  .pane {
      position: relative;
-     left: 25%;
      border: 2px solid;
      border-radius: 25px;
      padding: 5px;
      margin: 5px;
-     border-color: #999999;
-     background-color: #333333;
+     border-color: #1A237E;
+     background-color: #85C1E9;
  }
  
  .header {
