@@ -1,17 +1,21 @@
-<html>
-<body>
-	<head>
+{% extends "layout.html" %}
+{% block title %} Sign-in {% endblock title %}
+	{% block header %}
 	<!-- LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
 	<script src = "//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
 	</script>
 
 	<script src="//apis.google.com/js/platform.js?onload=start">
 	</script>
-	</head>
-
+	
+	{% endblock header %}
 	<!-- END PRE-REQUISITES FOR GOOGLE SIGN-IN -->
 
+	<body>
+	{% block body %}
 
+	<div class = "pane">
+	
 	<!-- GOOGLE PLUS SIGN-IN BUTTON -->
 	<div id="signInButton">
           <span class="g-signin"
@@ -62,7 +66,8 @@
         
 
     <!--END GOOGLE PLUS SIGN IN BUTTON -->
-
+    </div>
+    {% endblock body %}
 
 </body>
 </html>
