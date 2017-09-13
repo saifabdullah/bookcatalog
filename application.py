@@ -152,6 +152,7 @@ def gdisconnect():
         return response
 
 
+
 # Making an API endpoint for books from one category
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
 def catalogJSON(bookcategory_id):
@@ -197,6 +198,7 @@ def showLogin():
     login_session['state'] = state
     return render_template('login.html', STATE=state)
    
+
 
 
 @app.route('/cataloghome/<int:bookcategory_id>/newbook', methods=['GET', 'POST'])

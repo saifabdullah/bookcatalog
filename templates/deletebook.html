@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-<h2> Are you sure you want to delete {{item.name}}</h2>
-
-<form action = "{{ url_for('deleteBook',bookcategory_id=item.bookcategory_id,id=item.id)}}" method = 'post'>
-
-<input type = 'submit', value = 'Delete'>
-
-
-</form>
-
-<a href ="{{ url_for('cataloghome',bookcategory_id=item.bookcategory_id)}}"> Cancel </a>
-
-
-</body>
-</html>
+{% extends "layout.html" %}
+{% block title %} Catalog Home {% endblock title %}
+{% block body %}
+<div class = "pane">
+  <h2> Are you sure you want to delete {{item.name}}</h2>
+  <form action = "{{ url_for('deleteBook',bookcategory_id=item.bookcategory_id,id=item.id)}}" method = 'post'>
+  <input type = 'submit', value = 'Delete'>
+  </form>
+  <a href ="{{ url_for('cataloghome',bookcategory_id=item.bookcategory_id)}}"> Cancel </a>
+</div>
+{% endblock body %}

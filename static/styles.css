@@ -1,10 +1,8 @@
-
-
- h1,
- h2,
- h3,
- h4 {
-     color: #17202A;
+h1,
+h2,
+h3,
+h4 {
+     color: #17202a;
  }
   
 
@@ -54,12 +52,6 @@ a:active {
     color: #195b94;
 }
 
- .container {
-     font-family: sans-serif;
-     background-color: #3498DB;       
-;
-     
- }
  
  .pane {
      position: relative;
@@ -67,31 +59,38 @@ a:active {
      border-radius: 25px;
      padding: 5px;
      margin: 5px;
-     border-color: #1A237E;
-     background-color: #85C1E9;
+     border-color: #1a237e;
+     height: relative;
+     background-color: #85c1e9;
  }
  
- .header {
-     left: 50%;
-     text-align: center;
- }
 
+.header {
+     position: relative;
+     border: 1px solid;
+     border-radius: 2px;
+     padding: 5px;
+     margin: 5px;
+     border-color: #1A237E;
+     background-color: #FDFEFE;
+ }
+ 
+ .subheader {
+     text-align: center;
+     font-size: 1.3em;
+ }
+ 
  .login {
-     
-     
      float: right;
      display: inline-block;
-     
- }
- 
- .name {
+}
+.name {
      width: 50%;
      display: inline-block;
      float: left;
- }
+}
   
-
- .author {
+.author {
      text-align: right;
      width: 50%;
      float: right;
