@@ -29,7 +29,12 @@ session = DBSession()
 app = Flask(__name__)
 
 # Create anti-forgery state token
-
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    return render_template('login.html', STATE=state)
 
 
 
@@ -152,7 +157,7 @@ def gdisconnect():
         return response
 
 
-# Making an API endpoint for books from one category
+# JSON endpoint for books from one category
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
 def catalogJSON(bookcategory_id):
     bookcategory = session.query(
@@ -161,17 +166,19 @@ def catalogJSON(bookcategory_id):
         bookcategory_id=bookcategory_id).all()
     return jsonify(Books=[i.serialize for i in items])
 
-# Making an API endpoint for a certain book in a category
-
-
+# JSON endpoint for a certain book in a category
 @app.route('/cataloghome/<int:bookcategory_id>/books/<int:id>/JSON/')
 def bookJSON(bookcategory_id, id):
     book = session.query(Book).filter_by(id=id).one()
-
     return jsonify(book=book.serialize)
 
+@app.route('/cataloghome/JSON')
+def categoriesJSON():
+    categories = session.query(BookCategory).all()
+    return jsonify(categories=[i.serialize for i in categories])
 
 
+# Showing all Book Categories
 @app.route('/')
 @app.route('/cataloghome/')
 def showcatalog():
@@ -179,23 +186,23 @@ def showcatalog():
     return render_template('home.html',categories=categories)
 
 
-
+# Showing a book category
 @app.route('/cataloghome/<int:bookcategory_id>/')
+@app.route('/cataloghome/<int:bookcategory_id/book')
 def cataloghome(bookcategory_id):
-
-    bookcategory = session.query(
-        BookCategory).filter_by(id=bookcategory_id).one()
+    bookcategory = session.query(BookCategory).filter_by(id=bookcategory_id).one()
     items = session.query(Book).filter_by(bookcategory_id=bookcategory.id).all()
     return render_template('catalog.html', bookcategory=bookcategory, items=items)
 
 
 
-@app.route('/login')
-def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-    login_session['state'] = state
-    return render_template('login.html', STATE=state)
+
+
+
+
+
+
+
    
 
 
