@@ -185,6 +185,18 @@ def showcatalog():
     categories=session.query(BookCategory).all()
     return render_template('home.html',categories=categories)
 
+#Creating a new  Book Category
+
+
+
+
+
+#Editing a book category
+
+
+
+#Deleting a book category
+
 
 # Showing a book category
 @app.route('/cataloghome/<int:bookcategory_id>/')
@@ -195,17 +207,7 @@ def cataloghome(bookcategory_id):
     return render_template('catalog.html', bookcategory=bookcategory, items=items)
 
 
-
-
-
-
-
-
-
-
-   
-
-
+# Creating a new book in a category
 @app.route('/cataloghome/<int:bookcategory_id>/newbook', methods=['GET', 'POST'])
 def newBook(bookcategory_id):
     if 'username' not in login_session:
@@ -222,7 +224,7 @@ def newBook(bookcategory_id):
     else:
         return render_template('newbook.html', bookcategory_id=bookcategory_id)
 
-
+# Editing a book in a category
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook', methods=['GET', 'POST'])
 def editBook(bookcategory_id, id):
 
@@ -247,6 +249,7 @@ def editBook(bookcategory_id, id):
         return render_template('editbook.html', bookcategory_id=bookcategory_id, id=id, item=editedBook)
 
 
+# Deleting a book in a category
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook', methods=['GET', 'POST'])
 def deleteBook(bookcategory_id, id):
     if 'username' not in login_session:
