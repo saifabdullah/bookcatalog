@@ -2,12 +2,10 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, f
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from book_database_setup import Base,  BookCategory, Book
-
 # New imports for creating anti-forgery state token
 from flask import session as login_session
 import random
 import string
-
 # New Imports for GConnect
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
@@ -15,19 +13,14 @@ import httplib2
 import json
 from flask import make_response
 import requests
-
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Book Catalog Application"
-
-
 engine = create_engine('sqlite:///bookcatalog.db')
 Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 app = Flask(__name__)
-
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -35,10 +28,6 @@ def showLogin():
                     for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
-
-
-
-
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -48,7 +37,6 @@ def gconnect():
         return response
     # Obtain authorization code
     code = request.data
-
     try:
         # Upgrade the authorization code into a credentials object
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
@@ -59,7 +47,6 @@ def gconnect():
             json.dumps('Failed to upgrade the authorization code.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-
     # Check that the access token is valid.
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
@@ -71,7 +58,6 @@ def gconnect():
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
-
     # Verify that the access token is used for the intended user.
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
@@ -79,7 +65,6 @@ def gconnect():
             json.dumps("Token's user ID doesn't match given user ID."), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-
     # Verify that the access token is valid for this app.
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
@@ -87,7 +72,6 @@ def gconnect():
         print "Token's client ID does not match app's."
         response.headers['Content-Type'] = 'application/json'
         return response
-
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
@@ -95,22 +79,17 @@ def gconnect():
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
-
     # Store the access token in the session for later use.
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
-
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
-
     data = answer.json()
-
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
-
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -121,8 +100,6 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
-
-
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
@@ -155,10 +132,7 @@ def gdisconnect():
             'Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
-
 # JSON endpoint for books from one category
-
-
 # Making an API endpoint for books from one category
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
 def catalogJSON(bookcategory_id):
@@ -167,31 +141,22 @@ def catalogJSON(bookcategory_id):
     items = session.query(Book).filter_by(
         bookcategory_id=bookcategory_id).all()
     return jsonify(Books=[i.serialize for i in items])
-
 # JSON endpoint for a certain book in a category
 @app.route('/cataloghome/<int:bookcategory_id>/books/<int:id>/JSON/')
 def bookJSON(bookcategory_id, id):
     book = session.query(Book).filter_by(id=id).one()
     return jsonify(book=book.serialize)
-
 @app.route('/cataloghome/JSON')
 def categoriesJSON():
     categories = session.query(BookCategory).all()
     return jsonify(categories=[i.serialize for i in categories])
-
-
 # Showing all Book Categories
 @app.route('/')
 @app.route('/cataloghome/')
 def showcatalog():
     categories=session.query(BookCategory).all()
     return render_template('home.html',categories=categories)
-
 #Creating a new  Book Category
-
-
-
-
 # Showing a book category
 @app.route('/cataloghome/<int:bookcategory_id>/')
 @app.route('/cataloghome/<int:bookcategory_id>/book')
@@ -199,8 +164,6 @@ def cataloghome(bookcategory_id):
     bookcategory = session.query(BookCategory).filter_by(id=bookcategory_id).one()
     items = session.query(Book).filter_by(bookcategory_id=bookcategory.id).all()
     return render_template('catalog.html', bookcategory=bookcategory, items=items)
-
-
 # Creating a new book in a category
 @app.route('/cataloghome/<int:bookcategory_id>/newbook', methods=['GET', 'POST'])
 def newBook(bookcategory_id):
@@ -217,11 +180,9 @@ def newBook(bookcategory_id):
         return redirect(url_for('cataloghome', bookcategory_id=bookcategory_id))
     else:
         return render_template('newbook.html', bookcategory_id=bookcategory_id)
-
 # Editing a book in a category
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook', methods=['GET', 'POST'])
 def editBook(bookcategory_id, id):
-
     if 'username' not in login_session:
         return redirect('/login')
     editedBook = session.query(Book).filter_by(id=id).one()
@@ -238,11 +199,8 @@ def editBook(bookcategory_id, id):
         session.commit()
         flash("the book is edited successfully!")
         return redirect(url_for('cataloghome', bookcategory_id=bookcategory_id))
-
     else:
         return render_template('editbook.html', bookcategory_id=bookcategory_id, id=id, item=editedBook)
-
-
 # Deleting a book in a category
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook', methods=['GET', 'POST'])
 def deleteBook(bookcategory_id, id):
@@ -256,8 +214,6 @@ def deleteBook(bookcategory_id, id):
         return redirect(url_for('cataloghome', bookcategory_id=bookcategory_id))
     else:
         return render_template('deletebook.html', item=booktoDelete)
-
-
 if __name__ == '__main__':
     app.secret_key = 'top_secret_key'
     app.debug = True
