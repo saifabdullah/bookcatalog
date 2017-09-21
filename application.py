@@ -156,8 +156,10 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-
 # JSON endpoint for books from one category
+
+
+# Making an API endpoint for books from one category
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
 def catalogJSON(bookcategory_id):
     bookcategory = session.query(
@@ -190,17 +192,9 @@ def showcatalog():
 
 
 
-
-#Editing a book category
-
-
-
-#Deleting a book category
-
-
 # Showing a book category
 @app.route('/cataloghome/<int:bookcategory_id>/')
-@app.route('/cataloghome/<int:bookcategory_id/book')
+@app.route('/cataloghome/<int:bookcategory_id>/book')
 def cataloghome(bookcategory_id):
     bookcategory = session.query(BookCategory).filter_by(id=bookcategory_id).one()
     items = session.query(Book).filter_by(bookcategory_id=bookcategory.id).all()

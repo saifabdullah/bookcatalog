@@ -1,41 +1,30 @@
 {% extends "layout.html" %}
-{% block title %} Catalog Home {% endblock title %}
-{% block body %}
-    <div class = "pane">
-			<p></p>
-			<p></p>
-			<p></p>
-			<p></p>
-			<p></p>
-	<div class = "login">
-			<form action ="{{url_for('showLogin')}}">
-			<input type = "submit" value = "LOGIN">
-			</form>
-	</div>
-	<div class = "logout">
-			<form action ="{{url_for('gdisconnect')}}">
-			<input type = "submit" value = "LOGOUT">
-			</form>
-	</div>
-<div class = 'flash'>
-		      {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li> <strong> {{ message }} </strong> </li>
-        {% endfor %}
-        </ul>
+{% block title %} Homepage {% endblock title %}
+{% block body%}
+<div class = 'pane'>
+  <div class = 'flash'>
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+     <ul>
+     {% for message in messages %}
+        <li> <strong> {{ message }} </strong> </li>
+           {% endfor %}
+      </ul>
         {% endif %}
-    {% endwith %}
-</div>
-	<div class="category-list"><em><h3> Categories</h3></em>
-	{% for i in categories %}
-		<a href = "{{url_for('cataloghome', bookcategory_id = i.id)}}">
-						<h3>{{i.name}}</h3>
-						<p></p>
-						<p></p>
-						</a>
-		{% endfor %}
-	</div>
-	</div>
+        {% endwith %}
+   </div>
+   <h3> Categories</h3>
+     {% for i in categories %}
+   <a href = "{{url_for('cataloghome', bookcategory_id = i.id)}}">
+   <div class="row">
+   </div>
+   <div class="col-md-1">
+   </div>
+   <div class="col-md-10 category-list">
+	  <h3>{{i.name}}</h3>
+   </div>
+   <div class="col-md-1"></div>
+   </a>
+   {% endfor %}
+ </div>
 {% endblock body %}
