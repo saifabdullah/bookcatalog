@@ -35,26 +35,23 @@
 
 </div>
 	
-	<div class="col-md-10"><em><h3> Categories</h3></em></div>
+	<div class="category-list"><em><h3> Categories</h3></em>
 	{% for i in categories %}
 		
 		<a href = "{{url_for('cataloghome', bookcategory_id = i.id)}}">
-			<div class="row">
-				<div class="col-md-1"></div>
-					<div class="col-md-10 category-list">
+			
+				
 						<h3>{{i.name}}</h3>
 						<p></p>
 						<p></p>
-					</div>
-				<div class="col-md-1"></div>
-			</div>
-		</a>
-
+						</a>
+			
+		
+		
 		{% endfor %}
+	</div>
 
-
-</div>
+	</div>
 
 {% endblock body %}
-</body>
-</html>
+
