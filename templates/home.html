@@ -1,30 +1,25 @@
 {% extends "layout.html" %}
 {% block title %} Catalog Home {% endblock title %}
 {% block body %}
-    <body>
     <div class = "pane">
-    
-
 			<p></p>
 			<p></p>
-
-			
 			<p></p>
 			<p></p>
 			<p></p>
 	<div class = "login">
-			
 			<form action ="{{url_for('showLogin')}}">
-
 			<input type = "submit" value = "LOGIN">
 			</form>
-		
 	</div>
-
+	<div class = "logout">
+			<form action ="{{url_for('gdisconnect')}}">
+			<input type = "submit" value = "LOGOUT">
+			</form>
+	</div>
 <div class = 'flash'>
 		      {% with messages = get_flashed_messages() %}
       {% if messages %}
-          
         <ul>
         {% for message in messages %}
             <li> <strong> {{ message }} </strong> </li>
@@ -32,26 +27,15 @@
         </ul>
         {% endif %}
     {% endwith %}
-
 </div>
-	
 	<div class="category-list"><em><h3> Categories</h3></em>
 	{% for i in categories %}
-		
 		<a href = "{{url_for('cataloghome', bookcategory_id = i.id)}}">
-			
-				
 						<h3>{{i.name}}</h3>
 						<p></p>
 						<p></p>
 						</a>
-			
-		
-		
 		{% endfor %}
 	</div>
-
 	</div>
-
 {% endblock body %}
-
