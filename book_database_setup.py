@@ -9,6 +9,14 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+class User(Base):
+	__tablename__  = 'user'
+
+	id  = Column(Integer, primary_key=True)
+	name = Column(String(250), nullable=False)
+	email = Column(String(250), nullable=False)
+	picture = Column(String(250))
+
 class BookCategory(Base):
 
 	#creating Bookcategory class and table in the database.
@@ -17,6 +25,8 @@ class BookCategory(Base):
 
 	id = Column(Integer,primary_key=True)
 	name =  Column(String(250),nullable=False)
+	user_id = Column(Integer, ForeignKey('user.id'))
+	user = relationship(User)
 
 	
 
@@ -34,6 +44,8 @@ class Book(Base):
 	reviews = Column(String(500))
 	bookcategory_id = Column(Integer,ForeignKey('bookcategory.id'))
 	bookcategory = relationship(BookCategory)
+	user_id = Column(Integer, ForeignKey('user.id'))
+	user = relationship(User)
 
 	@property
 	def serialize(self):
