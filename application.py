@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from book_database_setup import Base,  BookCategory, Book
+from book_database_setup import Base, User, BookCategory, Book
 # New imports for creating anti-forgery state token
 from flask import session as login_session
 import random
@@ -104,6 +104,27 @@ def gconnect():
     print "done!"
     return output
 
+# User Helper Function
+def createUser(login_session):
+    newUser = User(name=login_session['username'],email=login_session
+        ['email'],picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+def getUserInfo(user_id):
+    user =  session.query(User).filter_by(id=user_id).one()
+    return user
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
+# DISCOONECT -  Revoke a current user's token and reset their login session.
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
@@ -165,7 +186,7 @@ def showcatalog():
     categories=session.query(BookCategory).all()
     return render_template('home.html',categories=categories)
 
-# Creating a new  Book Category
+
 @app.route('/cataloghome/<int:bookcategory_id>/')
 @app.route('/cataloghome/<int:bookcategory_id>/book')
 def cataloghome(bookcategory_id):
@@ -226,7 +247,7 @@ def deleteBook(bookcategory_id, id):
     else:
         return render_template('deletebook.html', item=booktoDelete)
 
-        
+
 if __name__ == '__main__':
     app.secret_key = 'top_secret_key'
     app.debug = True
