@@ -203,7 +203,7 @@ def newBook(bookcategory_id):
         newEntry = Book(name=request.form['name'], author=request.form['author'],
                         description=request.form[
                             'description'], reviews=request.form['reviews'],
-                        bookcategory_id=bookcategory_id)
+                        bookcategory_id=bookcategory_id,user_id=login_session['user_id'])
         session.add(newEntry)
         session.commit()
         flash('New Book %s Successfully created' % newEntry.name)
