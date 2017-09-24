@@ -2,10 +2,14 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, f
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from book_database_setup import Base, User, BookCategory, Book
+
+
 # New imports for creating anti-forgery state token
 from flask import session as login_session
 import random
 import string
+
+
 # New Imports for GConnect
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
@@ -13,13 +17,20 @@ import httplib2
 import json
 from flask import make_response
 import requests
+
+
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
+
 APPLICATION_NAME = "Book Catalog Application"
+
 engine = create_engine('sqlite:///bookcatalog.db')
 Base.metadata.bind = engine
+
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+
 app = Flask(__name__)
 
 
@@ -31,6 +42,7 @@ def showLogin():
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -38,6 +50,7 @@ def gconnect():
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+
     # Obtain authorization code
     code = request.data
     try:
@@ -50,17 +63,20 @@ def gconnect():
             json.dumps('Failed to upgrade the authorization code.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+
     # Check that the access token is valid.
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
+
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
+
     # Verify that the access token is used for the intended user.
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
@@ -68,6 +84,7 @@ def gconnect():
             json.dumps("Token's user ID doesn't match given user ID."), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+
     # Verify that the access token is valid for this app.
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
@@ -82,9 +99,11 @@ def gconnect():
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
+
     # Store the access token in the session for later use.
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
+
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
@@ -166,7 +185,7 @@ def gdisconnect():
 # Making an API endpoint for books from one category
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
 def catalogJSON(bookcategory_id):
-    bookcategory = session.query(
+    bookcjkategory = session.query(
         BookCategory).filter_by(id=bookcategory_id).one()
     items = session.query(Book).filter_by(
         bookcategory_id=bookcategory_id).all()
@@ -204,10 +223,11 @@ def newBook(bookcategory_id):
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        newEntry = Book(name=request.form['name'], author=request.form['author'],
-                        description=request.form[
-                            'description'], reviews=request.form['reviews'],
-                        bookcategory_id=bookcategory_id,user_id=login_session['user_id'])
+        newEntry = Book(name=request.form['name'], 
+                   author=request.form['author'],description=request.formd
+                        ['description'], reviews=request.form['reviews'],
+                        bookcategory_id=bookcategory_id,
+                        user_id=login_session['user_id'])
         session.add(newEntry)
         session.commit()
         flash('New Book %s Successfully created' % newEntry.name)
@@ -221,7 +241,9 @@ def editBook(bookcategory_id, id):
     if 'username' not in login_session:
         return redirect('/login')
     editedBook = session.query(Book).filter_by(id=id).one()
-    if request.method == 'POST':
+    if editedBook.user_id != login_session['user_id']:
+        flash('You cannot edit "%s". Please create your own book' %editedBook.name)
+        return redirect(url_for('showcatalog')) 
         if request.form['name']:
             editedBook.name = request.form['name']
         if request.form['author']:
@@ -243,6 +265,9 @@ def deleteBook(bookcategory_id, id):
     if 'username' not in login_session:
         return redirect('/login')
     booktoDelete = session.query(Book).filter_by(id=id).one()
+    if booktoDelete.user_id != login_session['user_id']:
+         flash('You cannot delete "%s". Please create your own book' %booktoDelete.name)
+         return redirect(url_for('showcatalog')) 
     if request.method == 'POST':
         session.delete(booktoDelete)
         session.commit()
