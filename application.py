@@ -182,7 +182,7 @@ def gdisconnect():
         response = make_response(json.dumps(
             'Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
-        return responses
+        return response
 
 # JSON endpoint for books from one category
 # Making an API endpoint for books from one category
@@ -250,6 +250,7 @@ def editBook(bookcategory_id, id):
         flash('You cannot edit "%s". Please create your own book'
                %editedBook.name)
         return redirect(url_for('showcatalog'))
+    if request.method == 'POST':
         if request.form['name']:
             editedBook.name = request.form['name']
         if request.form['author']:
@@ -258,9 +259,9 @@ def editBook(bookcategory_id, id):
             editedBook.description = request.form['description']
         if request.form['reviews']:
             editedBook.reviews = request.form['reviews']
-        session.add(editedBook)
-        session.commit()
-        flash("the book is edited successfully!")
+            session.add(editedBook)
+            session.commit()
+            flash("the book is edited successfully!")
         return redirect(url_for('cataloghome', bookcategory_id=bookcategory_id))
     else:
         return render_template('editbook.html', bookcategory_id=bookcategory_id,
