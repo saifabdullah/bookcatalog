@@ -122,7 +122,9 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;'\
+    'border-radius: 150px;-webkit-border-radius: 150px;'\
+    '-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -175,11 +177,12 @@ def gdisconnect():
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
+        
     else:
         response = make_response(json.dumps(
             'Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
-        return response
+        return responses
 
 # JSON endpoint for books from one category
 # Making an API endpoint for books from one category
@@ -224,8 +227,9 @@ def newBook(bookcategory_id):
         return redirect('/login')
     if request.method == 'POST':
         newEntry = Book(name=request.form['name'], 
-                   author=request.form['author'],description=request.formd
-                        ['description'], reviews=request.form['reviews'],
+                   author=request.form['author'],
+                   description=request.form['description'],
+                    reviews=request.form['reviews'],
                         bookcategory_id=bookcategory_id,
                         user_id=login_session['user_id'])
         session.add(newEntry)
