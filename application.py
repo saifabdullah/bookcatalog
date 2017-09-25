@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, \
+    jsonify, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from book_database_setup import Base, User, BookCategory, Book
@@ -95,8 +96,7 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(json.dumps('User is already connected.'),200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -122,9 +122,9 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;'\
-    'border-radius: 150px;-webkit-border-radius: 150px;'\
-    '-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;' \
+              'border-radius: 150px;-webkit-border-radius: 150px;'\
+              '-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -177,7 +177,7 @@ def gdisconnect():
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
-        
+
     else:
         response = make_response(json.dumps(
             'Failed to revoke token for given user.', 400))
@@ -226,12 +226,12 @@ def newBook(bookcategory_id):
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        newEntry = Book(name=request.form['name'], 
+        newEntry = Book(name=request.form['name'],
                    author=request.form['author'],
                    description=request.form['description'],
-                    reviews=request.form['reviews'],
-                        bookcategory_id=bookcategory_id,
-                        user_id=login_session['user_id'])
+                   reviews=request.form['reviews'],
+                   bookcategory_id=bookcategory_id,
+                   user_id=login_session['user_id'])
         session.add(newEntry)
         session.commit()
         flash('New Book %s Successfully created' % newEntry.name)
@@ -240,14 +240,16 @@ def newBook(bookcategory_id):
         return render_template('newbook.html', bookcategory_id=bookcategory_id)
 
 # Editing a book in a category
-@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook', methods=['GET', 'POST'])
+@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook',
+    methods=['GET', 'POST'])
 def editBook(bookcategory_id, id):
     if 'username' not in login_session:
         return redirect('/login')
     editedBook = session.query(Book).filter_by(id=id).one()
     if editedBook.user_id != login_session['user_id']:
-        flash('You cannot edit "%s". Please create your own book' %editedBook.name)
-        return redirect(url_for('showcatalog')) 
+        flash('You cannot edit "%s". Please create your own book'
+               %editedBook.name)
+        return redirect(url_for('showcatalog'))
         if request.form['name']:
             editedBook.name = request.form['name']
         if request.form['author']:
@@ -261,17 +263,20 @@ def editBook(bookcategory_id, id):
         flash("the book is edited successfully!")
         return redirect(url_for('cataloghome', bookcategory_id=bookcategory_id))
     else:
-        return render_template('editbook.html', bookcategory_id=bookcategory_id, id=id, item=editedBook)
+        return render_template('editbook.html', bookcategory_id=bookcategory_id,
+                               id=id, item=editedBook)
 
 # Deleting a book in a category
-@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook', methods=['GET', 'POST'])
+@app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook',
+              methods=['GET', 'POST'])
 def deleteBook(bookcategory_id, id):
     if 'username' not in login_session:
         return redirect('/login')
     booktoDelete = session.query(Book).filter_by(id=id).one()
     if booktoDelete.user_id != login_session['user_id']:
-         flash('You cannot delete "%s". Please create your own book' %booktoDelete.name)
-         return redirect(url_for('showcatalog')) 
+        flash('You cannot delete "%s". Please create your own book'
+               %booktoDelete.name)
+        return redirect(url_for('showcatalog'))
     if request.method == 'POST':
         session.delete(booktoDelete)
         session.commit()
