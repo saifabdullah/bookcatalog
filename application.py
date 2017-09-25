@@ -35,8 +35,8 @@ session = DBSession()
 app = Flask(__name__)
 
 
-# Create anti-forgery state token
 @app.route('/login')
+""" Login function which cretes anti-forgery state token. """
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
@@ -45,6 +45,7 @@ def showLogin():
 
 
 @app.route('/gconnect', methods=['POST'])
+""" Gathers data from Google Sign In API and places it inside a session variable."""
 def gconnect():
     # Validate state token
     if request.args.get('state') != login_session['state']:
@@ -149,8 +150,9 @@ def getUserID(email):
     except:
         return None
 
-# DISCOONECT -  Revoke a current user's token and reset their login session.
+
 @app.route('/gdisconnect')
+""" Delete's user's session data and log him out from the catalog app. """
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
@@ -184,8 +186,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-# JSON endpoint for books from one category
-# Making an API endpoint for books from one category
+""" JSON endpoint for all books within one category. """
 @app.route('/cataloghome/<int:bookcategory_id>/books/JSON/')
 def catalogJSON(bookcategory_id):
     bookcjkategory = session.query(
@@ -194,7 +195,7 @@ def catalogJSON(bookcategory_id):
         bookcategory_id=bookcategory_id).all()
     return jsonify(Books=[i.serialize for i in items])
 
-# JSON endpoint for a certain book in a category
+""" JSON endpoint for any specific book within a category. """
 @app.route('/cataloghome/<int:bookcategory_id>/books/<int:id>/JSON/')
 def bookJSON(bookcategory_id, id):
     book = session.query(Book).filter_by(id=id).one()
@@ -205,9 +206,10 @@ def categoriesJSON():
     return jsonify(categories=[i.serialize for i in categories])
 
 
-# Showing all Book Categories
+
 @app.route('/')
 @app.route('/cataloghome/')
+""" This is the main homepage of the catalog application."""
 def showcatalog():
     categories=session.query(BookCategory).all()
     return render_template('home.html',categories=categories)
@@ -215,13 +217,15 @@ def showcatalog():
 
 @app.route('/cataloghome/<int:bookcategory_id>/')
 @app.route('/cataloghome/<int:bookcategory_id>/book')
+""" Shows all books within any one category. """
 def cataloghome(bookcategory_id):
     bookcategory = session.query(BookCategory).filter_by(id=bookcategory_id).one()
     items = session.query(Book).filter_by(bookcategory_id=bookcategory.id).all()
     return render_template('catalog.html', bookcategory=bookcategory, items=items)
 
-# Creating a new book in a category
+
 @app.route('/cataloghome/<int:bookcategory_id>/newbook', methods=['GET', 'POST'])
+""" Creates a new book.  """
 def newBook(bookcategory_id):
     if 'username' not in login_session:
         return redirect('/login')
@@ -239,9 +243,10 @@ def newBook(bookcategory_id):
     else:
         return render_template('newbook.html', bookcategory_id=bookcategory_id)
 
-# Editing a book in a category
+
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/editbook',
     methods=['GET', 'POST'])
+""" Editing a book in a category. """
 def editBook(bookcategory_id, id):
     if 'username' not in login_session:
         return redirect('/login')
@@ -267,7 +272,7 @@ def editBook(bookcategory_id, id):
         return render_template('editbook.html', bookcategory_id=bookcategory_id,
                                id=id, item=editedBook)
 
-# Deleting a book in a category
+""" Deleting a book in a category. """
 @app.route('/cataloghome/<int:bookcategory_id>/<int:id>/deletebook',
               methods=['GET', 'POST'])
 def deleteBook(bookcategory_id, id):
