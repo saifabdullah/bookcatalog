@@ -11,6 +11,10 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+User1 = User(name="Saif Abdullah", email="saifab@gmail.com",
+             picture='https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png')
+session.add(User1)
+session.commit()
 # Books for History  & Autobiography category
 
 category1= BookCategory(name="History & autobiograpy")
